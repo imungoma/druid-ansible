@@ -42,7 +42,7 @@
 
 - hosts: brokers
   roles:
-    - proxy
+#    - proxy
     - supervisor
     - druid-common
     - broker
