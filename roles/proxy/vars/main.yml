@@ -1,0 +1,3 @@
+http_proxy: http://host.mycompany.net:80
+https_proxy: http://host.mycompany.net:80
+no_proxy: ".mycompany.net, .mycompany.net.com, localhost, 127.0.0.1"

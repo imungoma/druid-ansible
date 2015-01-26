@@ -1,0 +1,36 @@
+- name: install setuptools
+  yum: name=python-setuptools
+  sudo: yes
+
+- name: install pip
+  easy_install: name=pip
+  sudo: yes
+
+- name: install supervisor
+  pip: name=supervisor
+  sudo: yes  
+
+- name: ensure supervisor conf directory exits
+  file: path=/etc/supervisor state=directory
+  sudo: yes
+
+- name: ensure supervisor log conf exists
+  file: path=/var/log/supervisord/ state=directory
+  sudo: yes
+
+- name: copy over supervisord init
+  template: src=supervisord_init.sh dest=/etc/init.d/supervisor mode=0777  
+  sudo: yes
+
+- name: copy over default supervisord config
+  template: src=default_supervisord.conf dest=/etc/supervisord.conf group=wheel mode=0755
+  sudo: yes
+
+- name: add supervisor as service
+  shell: chkconfig --add supervisor; chkconfig supervisor on;
+  sudo: yes
+
+- name: start supervisord
+  service: name=supervisor state=started
+  sudo: yes
+

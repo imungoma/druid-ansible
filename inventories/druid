@@ -1,0 +1,63 @@
+[historicals]
+historical-1 ansible_ssh_host=host1.corp.yourcompany.net
+historical-2 ansible_ssh_host=host2.corp.yourcompany.net
+
+[middlemanagers]
+middlemanager-0 ansible_ssh_host=host3.corp.yourcompany.net
+
+
+[brokers]
+broker-1 ansible_ssh_host=host3.corp.yourcompany.net
+
+[overload]
+overload ansible_ssh_host=host4.corp.yourcompany.net
+
+[coordinator]
+coordinator ansible_ssh_host=host5.corp.yourcompany.net
+
+[mysql]
+mysql ansible_ssh_host=host6.corp.yourcompany.net
+
+[zookeeper]
+zookeeper= ansible_ssh_host=host6.corp.yourcompany.net
+
+[coordinator:vars]
+port=8080
+
+[brokers:vars]
+port=8080
+
+[historicals:vars]
+port=7080
+
+[overload:vars]
+port=8080
+
+[middlemanagers:vars]
+indexer_start_port=8082
+processing_buffer_size=536870912
+indexer_fork_port=8083
+indexer_fork_threads=3
+indexer_fork_http_threads=32
+port=8081
+
+
+[druids:children]
+overload
+historicals
+middlemanagers
+coordinator
+brokers
+
+[druids:vars]
+deep_storage_location=/druid/data/datasources
+zookeeper=host6.corp.yourcompany.net:2181
+mysql_connect_uri=jdbc:mysql://host6.corp.yourcompany.net:3306/druid
+mysql_druid_user=druid
+mysql_druid_password=diurd
+segment_cache_location=/app/druid/segment-cache
+druid_conf_dir=/etc/druid/conf
+druid_tmpdir=/tmp/
+
+
+

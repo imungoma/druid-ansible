@@ -1,0 +1,17 @@
+- name: ensure conf directory for coordinator exists
+  file: path={{ druid_conf_dir }}/coordinator state=directory
+  sudo: yes
+
+- name: copy over coordinator runtime.properties
+  template: src=runtime.properties dest={{ druid_conf_dir }}/coordinator/runtime.properties
+  sudo: yes
+
+- name: copy coordinator supervisord config
+  template: src=supervisord.conf dest=/etc/supervisor/coordinator.conf 
+  sudo: yes
+
+- name: start coordinator
+  supervisorctl: name=coordinator state=restarted 
+  sudo: yes
+  tags:
+      - restart

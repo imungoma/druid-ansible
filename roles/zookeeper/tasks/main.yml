@@ -1,0 +1,31 @@
+- name: Download zookeeper
+  get_url: url=http://apache.mirrors.pair.com/zookeeper/zookeeper-3.4.6/zookeeper-3.4.6.tar.gz 
+           dest=/tmp/
+           validate_certs=no 
+  sudo: yes
+  tags:
+      - packages
+      - common
+
+- name: unarchive zookeeper
+  unarchive: src="/tmp/zookeeper-3.4.6.tar.gz" dest=/usr/local/ copy=no mode=0755
+  sudo: yes
+  tags:
+      - packages
+      - common
+
+- name: copy zookeeper config
+  sudo: yes
+  shell: cp /usr/local/zookeeper-3.4.6/conf/zoo_sample.cfg /usr/local/zookeeper-3.4.6/conf/zoo.cfg; chmod 755 /usr/local/zookeeper-3.4.6/conf/zoo.cfg;
+
+- name: Create symlink to /usr/local/zookeeper
+  file: src="/usr/local/zookeeper-3.4.6" dest=/usr/local/zookeeper state=link mode=0755
+  sudo: yes
+
+- name: copy zookeeper config
+  template: src=supervisord.conf dest=/etc/supervisor/zookeeper.conf group=wheel mode=0755
+  sudo: yes
+
+- name: start zookeeper
+  supervisorctl: name=zookeeper state=restarted 
+  sudo: yes

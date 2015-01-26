@@ -1,0 +1,27 @@
+- name: Download druid
+  get_url: url=http://static.druid.io/artifacts/releases/druid-services-{{ druid_version }}-bin.tar.gz  dest=/tmp/ force=true
+  sudo: yes
+  tags:
+      - druid_install
+      - packages
+      
+- name: unarchive druid
+  unarchive: src="/tmp/druid-services-{{ druid_version }}-bin.tar.gz" dest=/usr/local/ copy=no
+  sudo: yes
+  tags:
+      - packages
+      - druid_install
+
+- name: Create symlink to /usr/local/druid
+  file: src="/usr/local/druid-services-{{ druid_version }}" dest=/usr/local/druid state=link
+  sudo: yes
+  tags:
+      - druid_install
+
+- name: ensure druid config directory exists
+  file: path={{ druid_conf_dir }} state=directory
+  sudo: yes
+
+- name: install java7
+  yum: name=java-1.7.0-openjdk 
+  sudo: yes 

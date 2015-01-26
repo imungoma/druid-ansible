@@ -1,0 +1,25 @@
+- name: ensure index directories exists
+  file: path={{ deep_storage_location }} state=directory
+  sudo: yes
+
+- name: ensure segment cache directory exists
+  file: path={{ segment_cache_location }} state=directory
+  sudo: yes
+
+- name: ensure conf directory for historical exists
+  file: path={{ druid_conf_dir }}/historical state=directory
+  sudo: yes
+
+- name: copy over historical runtime.properties
+  template: src=runtime.properties dest={{ druid_conf_dir }}/historical/runtime.properties
+  sudo: yes
+
+- name: copy historical supervisord config
+  template: src=supervisord.conf dest=/etc/supervisor/historical.conf 
+  sudo: yes
+
+- name: start historical
+  supervisorctl: name=historical state=restarted 
+  sudo: yes
+  tags:
+      - restart

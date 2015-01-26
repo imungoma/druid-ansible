@@ -1,0 +1,9 @@
+---
+# defaults file for ansible-common
+mgmt_addr: ansible_default_ipv4.address
+dns1: 8.8.8.8
+hostname: host1
+management_interface: ansible_default_ipv4.interface
+gateway: ansible_default_ipv4.gateway
+prefix: 24
+domain: localdomain

@@ -1,0 +1,116 @@
+---
+# tasks file for ansible-common
+#- name: sudoers
+#  copy: src=sudoers dest=/etc/sudoers owner=root group=root mode=0440
+#  sudo: yes
+#  tags:
+#      - users
+#      - common
+
+#- name: Yum Fastest Mirror
+#  yum: name=yum-plugin-fastestmirror state=latest
+#  when: ansible_os_family == "RedHat"
+#  sudo: yes
+#  tags:
+#      - packages
+#      - common
+
+
+- name: Multilib yum update
+  command: yum update -y --setopt=protected_multilib=false
+  sudo: yes
+- name: Update System
+  yum: name=* state=latest  
+  when: ansible_os_family == "RedHat"
+  sudo: yes
+  tags:
+      - packages
+      - common
+
+- name: Install systemd
+  yum: name=systemd state=latest
+  sudo: yes
+  when: ansible_os_family == "RedHat"
+  tags:
+      - packages
+      - common
+#- name: Install Packages
+#  yum:  name={{ item }} state=latest
+#  when: ansible_os_family == "RedHat"
+#  sudo: yes
+#  with_items:
+#      - bridge-utils
+#      - policycoreutils-python
+#  tags: 
+#      - packages
+#      - common
+
+#- name: disalbe firewalld
+#  service: name=firewalld state=stopped enabled=no
+#  sudo: yes
+#  when: ansible_os_family == "RedHat"
+#  sudo: yes
+#  tags:
+#    - common
+
+#- name: disable NetworkManager
+#  service: name=NetworkManager state=stopped enabled=no
+#  when: ansible_os_family == "RedHat"
+#  sudo: yes
+#  tags:
+#    - common
+
+#- name: Configure Management Interface
+#  template: src=ifcfg-mgmt
+#            dest="/etc/sysconfig/network-scripts/ifcfg-{{ management_interface }}"
+#            owner=root 
+#            group=root 
+#            mode=0644
+#  sudo: yes
+#  when: ansible_os_family == "RedHat"
+#  notify: restart network
+#  tags:
+#      - networking
+#      - common
+
+#- name: restart network
+#  meta: flush_handlers
+#  tags:
+#    - common
+
+#- name: config sshd_config
+#  template: src=sshd_config 
+#            dest=/etc/ssh/sshd_config 
+#            owner=root 
+#            group=root 
+#            mode=0644
+#  sudo: yes
+#  notify:
+#  - restart sshd
+#  tags:
+#    - common
+
+#- name: Base /etc/hosts Template
+#  template: src=hosts dest=/etc/hosts mode=0644 owner=root group=root
+#  sudo: yes
+#  tags:
+#    - networking
+#    - common
+#
+#- name: Set Hostname
+#  hostname: name="{{ hostname }}"
+#  sudo: yes
+#  tags:
+#    - networking
+#    - common
+#
+#- name: Build hosts file
+#  lineinfile: dest=/etc/hosts 
+#              regexp='.*{{ item }}$' line="{{ hostvars[item].mgmt_addr }} {{item }}.{{ domain }} {{item}}" 
+#              state=present
+#  when: hostvars[item].ansible_default_ipv4.address is defined
+#  with_items: groups['all']
+#  sudo: yes
+#  tags:
+#      - networking
+##      - common

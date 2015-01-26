@@ -1,0 +1,23 @@
+- name: ensure index directories exist
+  file: path={{ deep_storage_location }} state=directory
+  sudo: yes
+
+- name: ensure conf directory for middlemanager exists
+  file: path="{{ druid_conf_dir }}/middle-manager" state=directory
+  sudo: yes
+
+- name: copy over middlemanager runtime.properties
+  template: src=runtime.properties dest="{{ druid_conf_dir }}/middle-manager/runtime.properties"
+  sudo: yes
+  tags:
+      - config_copy
+
+- name: copy middlemanager supervisord config
+  template: src=supervisord.conf dest=/etc/supervisor/middlemanager.conf 
+  sudo: yes
+
+- name: start middlemanager
+  supervisorctl: name=middlemanager state=restarted 
+  sudo: yes
+  tags:
+      - restart

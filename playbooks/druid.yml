@@ -1,0 +1,48 @@
+---
+# file: site.yml
+- hosts: mysql
+  roles:
+#    - proxy
+    - mysql
+
+- hosts: zookeeper
+  roles:
+#    - proxy
+    - supervisor
+    - zookeeper
+ 
+- hosts: overload
+  roles:
+#    - proxy
+    - supervisor
+    - druid-common
+    - overload
+
+- hosts: middlemanagers
+  roles:
+#    - proxy
+    - supervisor
+    - druid-common
+    - middle-manager
+      
+
+- hosts: coordinator
+  roles:
+#    - proxy
+    - supervisor
+    - druid-common
+    - coordinator
+   
+- hosts: historicals
+  roles:
+#    - proxy
+    - supervisor
+    - druid-common
+    - historical
+
+- hosts: brokers
+  roles:
+    - proxy
+    - supervisor
+    - druid-common
+    - broker

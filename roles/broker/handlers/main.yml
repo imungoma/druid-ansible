@@ -1,0 +1,9 @@
+---
+# handlers file for ansible-common
+- name: restart network
+  service: name=network state=restarted enabled=yes
+  sudo: yes
+
+- name: restart sshd
+  service: name=sshd.service state=reloaded
+  sudo: yes

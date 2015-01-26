@@ -1,0 +1,26 @@
+# mysql file
+- name: install mysql-server
+  yum: name=mysql-server state=present
+  sudo: yes
+  tags:
+      - packages
+      - common
+
+- name: install mysql client
+  yum: name=mysql state=present  
+  sudo: yes
+  tags:
+      - packages
+      - common
+
+#- name: set mysql bind address
+#  lineinfile: dest=/etc/mysql/my.cnf state=present regexp="^bind-address" line="bind-address = 0.0.0.0"
+#  sudo: yes
+
+- name: start mysql server
+  service: name=mysqld state=started enabled=yes
+  sudo: yes
+
+- name: create druid database, user, and necessary tables
+  sudo: yes
+  shell: echo "GRANT ALL PRIVILEGES ON druid.* TO 'druid'@'%' IDENTIFIED BY 'diurd' WITH GRANT OPTION; FLUSH PRIVILEGES; CREATE database IF NOT EXISTS druid; USE druid; DROP TABLE IF EXISTS prod_segments; CREATE TABLE prod_segments ( id varchar(255) NOT NULL, dataSource varchar(255) NOT NULL, created_date text NOT NULL, start text NOT NULL, "end" text NOT NULL, partitioned SMALLINT NOT NULL, version text NOT NULL, used boolean NOT NULL, payload text NOT NULL, PRIMARY KEY (id) );" | mysql -u root  

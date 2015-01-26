@@ -1,0 +1,21 @@
+- name: ensure index directories exist
+  file: path={{ deep_storage_location }} state=directory
+  sudo: yes
+
+- name: ensure conf directory for overload exists
+  file: path={{ druid_conf_dir }}/overload state=directory
+  sudo: yes
+
+- name: copy over overload runtime.properties
+  template: src=runtime.properties dest={{ druid_conf_dir }}/overload/runtime.properties
+  sudo: yes
+
+- name: copy overload supervisord config
+  template: src=supervisord.conf dest=/etc/supervisor/overload.conf 
+  sudo: yes
+
+- name: start overload
+  supervisorctl: name=overload state=restarted 
+  sudo: yes
+  tags:
+      - restart
