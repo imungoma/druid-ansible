@@ -1,0 +1,11 @@
+DEVICE={{ management_interface}}
+BOOTPROTO=static
+ONBOOT=yes
+GATEWAY={{ gateway }}
+DNS1={{ dns1 }}
+DNS2=8.8.4.4
+IPADDR={{ mgmt_addr }}
+PREFIX={{ prefix }}
+DOMAIN={{ domain }}
+DELAY=0
+NM_CONTROLLED=no

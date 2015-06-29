@@ -6,13 +6,23 @@
   file: path={{ druid_conf_dir }}/overload state=directory
   sudo: yes
 
+- name: ensure log directory exists
+  file: path={{ task_log_directory }} state=directory
+  sudo: yes
+  tags:
+      - ensure_log_dir
+
 - name: copy over overload runtime.properties
   template: src=runtime.properties dest={{ druid_conf_dir }}/overload/runtime.properties
   sudo: yes
+  tags:
+      - copy_configs
 
 - name: copy overload supervisord config
   template: src=supervisord.conf dest=/etc/supervisor/overload.conf 
   sudo: yes
+  tags:
+      - copy_configs
 
 - name: start overload
   supervisorctl: name=overload state=restarted 

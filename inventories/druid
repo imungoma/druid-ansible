@@ -1,25 +1,34 @@
 [historicals]
-historical-1 ansible_ssh_host=host1.corp.yourcompany.net
-historical-2 ansible_ssh_host=host2.corp.yourcompany.net
+historical-1 ansible_ssh_host=host1.yourcompany.net
+historical-2 ansible_ssh_host=host2.yourcompany.net
+historical-3 ansible_ssh_host=host3.yourcompany.net
+historical-4 ansible_ssh_host=host4.yourcompany.net
+historical-5 ansible_ssh_host=host5.yourcompany.net
+historical-6 ansible_ssh_host=host6.yourcompany.net
+historical-7 ansible_ssh_host=host7.yourcompany.net
+historical-8 ansible_ssh_host=host8.yourcompany.net
 
 [middlemanagers]
-middlemanager-0 ansible_ssh_host=host3.corp.yourcompany.net
+middlemanager-0 ansible_ssh_host=host1.yourcompany.net
+middlemanager-1 ansible_ssh_host=host2.yourcompany.net
+middlemanager-2 ansible_ssh_host=host3.yourcompany.net
+middlemanager-3 ansible_ssh_host=host4.yourcompany.net
 
 
 [brokers]
-broker-1 ansible_ssh_host=host3.corp.yourcompany.net
+broker-1 ansible_ssh_host=host6.yourcompany.net
 
 [overload]
-overload ansible_ssh_host=host4.corp.yourcompany.net
+overload ansible_ssh_host=host7.yourcompany.net
 
 [coordinator]
-coordinator ansible_ssh_host=host5.corp.yourcompany.net
+coordinator ansible_ssh_host=host8.yourcompany.net
 
 [mysql]
-mysql ansible_ssh_host=host6.corp.yourcompany.net
+mysql ansible_ssh_host=host8.yourcompany.net
 
 [zookeeper]
-zookeeper= ansible_ssh_host=host6.corp.yourcompany.net
+zookeeper= ansible_ssh_host=host8.yourcompany.net
 
 [coordinator:vars]
 port=8080
@@ -32,10 +41,14 @@ port=7080
 
 [overload:vars]
 port=8080
+task_storage_type=hdfs
+task_log_type=local
+task_log_directory=/druid/logs/tasks
 
 [middlemanagers:vars]
 indexer_start_port=8082
 processing_buffer_size=536870912
+middle_manager_processing_threads=4
 indexer_fork_port=8083
 indexer_fork_threads=3
 indexer_fork_http_threads=32
@@ -50,14 +63,28 @@ coordinator
 brokers
 
 [druids:vars]
+deep_storage_type=hdfs
 deep_storage_location=/druid/data/datasources
-zookeeper=host6.corp.yourcompany.net:2181
-mysql_connect_uri=jdbc:mysql://host6.corp.yourcompany.net:3306/druid
+namenode_host=host8.yourcompany.net
+namenode_port=8020
+hadoop_user=hdfs
+zookeeper=host8.yourcompany.net:2181
+mysql_connect_uri=jdbc:mysql://host8.yourcompany.net:3306/druid
 mysql_druid_user=druid
 mysql_druid_password=diurd
 segment_cache_location=/app/druid/segment-cache
 druid_conf_dir=/etc/druid/conf
 druid_tmpdir=/tmp/
-
-
-
+metadata_storage_type=mysql
+mysql_artifact=mysql:mysql-connector-java:5.1.6
+metadata_artifact=io.druid.extensions:mysql-metadata-storage:0.7.1
+hdfsstorage_artifact=io.druid.extensions:druid-hdfs-storage:0.7.1
+hadoopclient_artifact=org.apache.hadoop:hadoop-client:2.6.0
+druid_maven_repo=https://metamx.artifactoryonline.com/metamx/libs-releases
+[all:vars]
+druid_version=0.8.0-rc1
+sudouser=sudouser
+http_proxy_host=
+http_proxy_port=80
+non_proxy_hosts='"*.yourdomain.com|*.yourdomain.net"'
+hadoop_client_libs_path=/usr/hdp/2.2.0.0-2041/hadoop/client/*

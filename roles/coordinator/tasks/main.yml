@@ -5,10 +5,30 @@
 - name: copy over coordinator runtime.properties
   template: src=runtime.properties dest={{ druid_conf_dir }}/coordinator/runtime.properties
   sudo: yes
+  tags:
+      - config_copy
+
+- name: install mysql metadata druid connector
+  shell: mvn org.apache.maven.plugins:maven-dependency-plugin:2.1:get -DrepoUrl={{ druid_maven_repo }} -Dartifact={{ metadata_artifact }} -DproxySet=true -DproxyHost={{ http_proxy_host }} -DproxyPort={{ http_proxy_port }}
+  tags:
+      - mvn_deps
+ 
+- name: install mysql java
+  shell: mvn org.apache.maven.plugins:maven-dependency-plugin:2.1:get -DrepoUrl={{ druid_maven_repo }} -Dartifact={{ mysql_artifact }} -DproxySet=true -DproxyHost={{ http_proxy_host }} -DproxyPort={{ http_proxy_port }}
+  tags:
+      - mvn_deps
+
+- name: copy mysql to /usr/local/druid/lib
+  copy: src=mysql-connector-java-5.1.6.jar dest=/usr/local/druid/lib
+  sudo: yes
+  tags:
+      - mvn_deps
 
 - name: copy coordinator supervisord config
   template: src=supervisord.conf dest=/etc/supervisor/coordinator.conf 
   sudo: yes
+  tags:  
+      - config_supervisor
 
 - name: start coordinator
   supervisorctl: name=coordinator state=restarted 

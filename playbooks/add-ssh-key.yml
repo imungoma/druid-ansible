@@ -4,3 +4,4 @@
   tasks:
   - name: Add RSA key to the remote host
     authorized_key: user='{{ user }}' key="{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+    sudo: yes

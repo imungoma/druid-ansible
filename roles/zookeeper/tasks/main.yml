@@ -29,3 +29,5 @@
 - name: start zookeeper
   supervisorctl: name=zookeeper state=restarted 
   sudo: yes
+  tags:
+      - restart

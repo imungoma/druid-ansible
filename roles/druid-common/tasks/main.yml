@@ -1,22 +1,23 @@
 - name: Download druid
-  get_url: url=http://static.druid.io/artifacts/releases/druid-services-{{ druid_version }}-bin.tar.gz  dest=/tmp/ force=true
+  get_url: url=http://static.druid.io/artifacts/releases/druid-{{ druid_version }}-bin.tar.gz  dest=/tmp/ force=true
   sudo: yes
   tags:
       - druid_install
       - packages
       
 - name: unarchive druid
-  unarchive: src="/tmp/druid-services-{{ druid_version }}-bin.tar.gz" dest=/usr/local/ copy=no
+  unarchive: src="/tmp/druid-{{ druid_version }}-bin.tar.gz" dest=/usr/local/ copy=no
   sudo: yes
   tags:
       - packages
       - druid_install
 
 - name: Create symlink to /usr/local/druid
-  file: src="/usr/local/druid-services-{{ druid_version }}" dest=/usr/local/druid state=link
+  file: src="/usr/local/druid-{{ druid_version }}" dest=/usr/local/druid state=link
   sudo: yes
   tags:
       - druid_install
+      - druid_symlink
 
 - name: ensure druid config directory exists
   file: path={{ druid_conf_dir }} state=directory
@@ -25,3 +26,71 @@
 - name: install java7
   yum: name=java-1.7.0-openjdk 
   sudo: yes 
+
+- name: download maven
+  get_url: url=http://mirror.nexcess.net/apache/maven/maven-3/3.2.5/binaries/apache-maven-3.2.5-bin.tar.gz dest=/tmp/ 
+  sudo: yes
+  tags:
+      - maven_install
+
+
+- name: unarchive maven
+  unarchive: src="/tmp/apache-maven-3.2.5-bin.tar.gz" dest=/usr/local/ copy=no
+  sudo: yes
+  tags:
+      - maven_install
+
+- name: Create symlink to /usr/local/maven
+  file: src="/usr/local/apache-maven-3.2.5" dest=/usr/local/maven state=link
+  sudo: yes
+  tags:
+      - maven_link
+      - maven_install
+
+- name: copy maven profile
+  template: src=maven.sh dest=/etc/profile.d/maven.sh mode=0644 
+  sudo: yes
+  tags:
+      - maven_link
+      - maven_install
+ 
+- name: Download yum repo for maven
+  get_url: url=http://repos.fedorapeople.org/repos/dchen/apache-maven/epel-apache-maven.repo  dest=/etc/yum.repos.d/ force=true
+  sudo: yes
+  tags:
+      - druid_install
+      - packages
+      - maven_yum_install
+
+- name: install maven
+  yum: name=apache-maven state=present
+  sudo: yes
+  tags:
+      - packages
+      - common
+      - maven_yum_install
+
+- name: install mysql metadata druid connector
+  shell: /usr/local/maven/bin/mvn org.apache.maven.plugins:maven-dependency-plugin:2.1:get -DrepoUrl={{ druid_maven_repo }} -Dartifact={{ metadata_artifact }} -DproxySet=true -DproxyHost={{ http_proxy_host }} -DproxyPort={{ http_proxy_port }}
+  sudo: yes
+  tags:
+      - druid_mvn_deps
+
+- name: install hdfs metadata storage module
+  shell: /usr/local/maven/bin/mvn org.apache.maven.plugins:maven-dependency-plugin:2.1:get -DrepoUrl={{ druid_maven_repo }} -Dartifact={{ hdfsstorage_artifact }} -DproxySet=true -DproxyHost={{ http_proxy_host }} -DproxyPort={{ http_proxy_port }}
+  sudo: yes
+  tags:
+      - druid_mvn_deps
+
+- name: install hadoop client
+  shell: /usr/local/maven/bin/mvn org.apache.maven.plugins:maven-dependency-plugin:2.1:get -DrepoUrl={{ druid_maven_repo }} -Dartifact={{ hadoopclient_artifact }} -DproxySet=true -DproxyHost={{ http_proxy_host }} -DproxyPort={{ http_proxy_port }}
+  sudo: yes
+  tags:
+      - druid_mvn_deps
+
+- name: copy druid libs /usr/local/druid/lib
+  copy: src=druid_libs/ dest=/usr/local/druid/lib
+  sudo: yes
+  tags:
+      - druid_mvn_deps
+      - copy_druid_libs

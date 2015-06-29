@@ -7,20 +7,20 @@
 
 - hosts: zookeeper
   roles:
-#    - proxy
+ #   - proxy
     - supervisor
     - zookeeper
  
 - hosts: overload
   roles:
-#    - proxy
+  #  - proxy
     - supervisor
     - druid-common
     - overload
 
 - hosts: middlemanagers
   roles:
-#    - proxy
+  #  - proxy
     - supervisor
     - druid-common
     - middle-manager
@@ -28,21 +28,21 @@
 
 - hosts: coordinator
   roles:
-#    - proxy
+  #  - proxy
     - supervisor
     - druid-common
     - coordinator
    
 - hosts: historicals
   roles:
-#    - proxy
+  #  - proxy
     - supervisor
     - druid-common
     - historical
 
 - hosts: brokers
   roles:
-#    - proxy
+   # - proxy
     - supervisor
     - druid-common
     - broker

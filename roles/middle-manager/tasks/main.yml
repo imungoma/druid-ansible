@@ -5,16 +5,26 @@
 - name: ensure conf directory for middlemanager exists
   file: path="{{ druid_conf_dir }}/middle-manager" state=directory
   sudo: yes
+  tags:
+      - ensure_conf_dir
 
 - name: copy over middlemanager runtime.properties
   template: src=runtime.properties dest="{{ druid_conf_dir }}/middle-manager/runtime.properties"
   sudo: yes
   tags:
-      - config_copy
+      - copy_configs
+
+- name: install hadoop client
+  shell: mvn org.apache.maven.plugins:maven-dependency-plugin:2.1:get -DrepoUrl={{ druid_maven_repo }} -Dartifact={{ hadoopclient_artifact }} -DproxySet=true -DproxyHost={{ http_proxy_host }} -DproxyPort={{ http_proxy_port }}
+  sudo: yes
+  tags:
+      - mvn_deps
 
 - name: copy middlemanager supervisord config
   template: src=supervisord.conf dest=/etc/supervisor/middlemanager.conf 
   sudo: yes
+  tags:
+      - copy_configs
 
 - name: start middlemanager
   supervisorctl: name=middlemanager state=restarted 

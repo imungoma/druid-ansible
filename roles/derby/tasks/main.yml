@@ -1,0 +1,11 @@
+# mysql file
+- name: download derby
+  yum: name=mysql-server state=present
+  sudo: yes
+  tags:
+      - packages
+      - common
+
+- name: start derby
+  service: name=mysqld state=started enabled=yes
+  sudo: yes

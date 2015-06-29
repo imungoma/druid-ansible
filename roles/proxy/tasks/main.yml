@@ -28,6 +28,13 @@
   ignore_errors: yes
   sudo: yes
 
+- name: setup passwordless user
+  lineinfile: dest=/etc/sudoers state=present line="{{ sudouser }} ALL=(ALL) NOPASSWD":" ALL" insertafter=EOF
+  sudo: yes
+  tags:
+     -  passwordlessudo
+
+
 #- name: insert docker proxy(http)
 #  lineinfile: dest=/etc/default/docker state=present create=yes owner=root group=root mode=0644 regexp="export http_proxy={{ http_proxy }}"
 #              insertafter=EOF line="export http_proxy={{ http_proxy }}"

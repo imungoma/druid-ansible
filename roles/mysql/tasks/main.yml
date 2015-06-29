@@ -20,7 +20,9 @@
 - name: start mysql server
   service: name=mysqld state=started enabled=yes
   sudo: yes
+  tags:
+      - restart
 
 - name: create druid database, user, and necessary tables
   sudo: yes
-  shell: echo "GRANT ALL PRIVILEGES ON druid.* TO 'druid'@'%' IDENTIFIED BY 'diurd' WITH GRANT OPTION; FLUSH PRIVILEGES; CREATE database IF NOT EXISTS druid; USE druid; DROP TABLE IF EXISTS prod_segments; CREATE TABLE prod_segments ( id varchar(255) NOT NULL, dataSource varchar(255) NOT NULL, created_date text NOT NULL, start text NOT NULL, "end" text NOT NULL, partitioned SMALLINT NOT NULL, version text NOT NULL, used boolean NOT NULL, payload text NOT NULL, PRIMARY KEY (id) );" | mysql -u root  
+  shell: echo "GRANT ALL PRIVILEGES ON druid.* TO 'druid'@'%' IDENTIFIED BY 'diurd' WITH GRANT OPTION; FLUSH PRIVILEGES; CREATE database IF NOT EXISTS druid; ALTER DATABASE druid DEFAULT CHARACTER SET utf8;USE druid; DROP TABLE IF EXISTS prod_segments; CREATE TABLE prod_segments ( id varchar(255) NOT NULL, dataSource varchar(255) NOT NULL, created_date text NOT NULL, start text NOT NULL, "end" text NOT NULL, partitioned SMALLINT NOT NULL, version text NOT NULL, used boolean NOT NULL, payload text NOT NULL, PRIMARY KEY (id) );" | mysql -u root  

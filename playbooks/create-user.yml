@@ -1,0 +1,24 @@
+- hosts: all
+  remote_user: 'imungoma'
+  tasks:
+    - name: creater user
+      user: name=ambari shell=/bin/bash groups=wheel append=yes state=present
+      sudo: yes
+    - name: setup passwordless user
+      lineinfile: dest=/etc/sudoers state=present line="ambari ALL=(root) NOPASSWD":" ALL" regexp="ambari ALL=(ALL) NOPASSWD":" ALL"
+      sudo: yes
+      tags:
+        - passwordlesssudo
+    - name: Add RSA key to the remote host
+      authorized_key: user='ambari' key="{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+      sudo: yes
+    - name: add path hadoop path
+      template: src="./templates/hadoop.sh.j2" dest="/etc/profile.d/hadoop.sh" owner=root group=wheel mode=0644 
+      sudo: yes
+      tags:
+        - hadoop
+    - name: setup umask
+      lineinfile: dest=/etc/bashrc state=present line="umask 022" regexp="^umask 077"
+      sudo: yes
+      tags:
+        - umask

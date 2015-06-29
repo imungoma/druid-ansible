@@ -13,10 +13,14 @@
 - name: copy over historical runtime.properties
   template: src=runtime.properties dest={{ druid_conf_dir }}/historical/runtime.properties
   sudo: yes
+  tags:
+      - copy_configs
 
 - name: copy historical supervisord config
   template: src=supervisord.conf dest=/etc/supervisor/historical.conf 
   sudo: yes
+  tags:
+      - copy_configs
 
 - name: start historical
   supervisorctl: name=historical state=restarted 
